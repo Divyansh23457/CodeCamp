@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400&family=Roboto:wght@300&display=swap"
+        rel="stylesheet">
+    <title>CodeCamp-Online Code Compiler</title>
+    <link rel="stylesheet" href="compiler.css">
+    <link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css">
+    <script src="node_modules/codemirror/lib/codemirror.js"></script>
+    <script src="compiler.js"></script>
+    <script src="node_modules/codemirror/mode/clike/clike.js"></script>
+    <link rel="stylesheet" href="node_modules/codemirror/theme/dracula.css">
+    <script src="node_modules/codemirror/mode/python/python.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="left">
+                CODECAMP
+            </div>
+            <div class="right">
+                <ul>
+                    <li><a href="/compiler.html">C</a></li>
+                    <li><a href="/compiler.html">C++</a></li>
+                    <li><a href="/compiler.html">Java</a></li>
+                    <li><a href="/compiler.html">Python</a></li>
+                    
+                </ul>
+            </div>
+        </nav>
+    </header>
+    
+    <main>
+        <div class="container">
+            <h1>Online Code Compiler</h1>
+            <form action="/compile" method="post" novalidate>
+              <div class="form-group">
+                <label for="language">Language:</label>
+                <select id="language" name="lang">
+                  <option value="c">C</option>
+                  <option value="cpp" selected>C++</option>
+                  <option value="java">Java</option>
+                  <option value="python">Python</option>
+                  
+                  
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="code"> Start writing your code below :</label>
+                <textarea id="editor" name="code" rows="10"  required>
+                    
+                </textarea>
+                <br>
+                <label for="inputarea">Custom Input:</label>
+                <textarea id="inputarea" name="input" rows="5" cols="5" ></textarea>
+              </div>
+              
+              <div class="form-group">
+                <button class = "button-3" onclick="Run()">Run Code</button>
+              </div>
+            </form>
+
+            <div class="outputArea" id = "outputArea"></div>
+
+          </div>
+    </main>
+    <script>
+        var editor = CodeMirror.fromTextArea(document.getElementById("editor"),{
+            mode: "text/x-c++src",
+            theme:"dracula",
+            lineNumbers:true,
+            autoCloseBrackets : true,
+        }) 
+        var inputeditor = CodeMirror.fromTextArea(document.getElementById("inputarea"),{
+            mode: "text/x-c++src",
+            theme:"dracula",     
+            autoCloseBrackets : true,
+        }) 
+        
+        var width = window.innerWidth;
+        editor.setSize(0.7*width,"500");
+        inputeditor.setSize(0.7*width,"100");
+
+        var option =document.getElementById("language");
+        option.addEventListener("change",function(){
+            if(option.value == 'java'){
+                editor.setOption("mode","text/x-java");
+            }
+            else if(option.value == 'python'){
+                editor.setOption("mode","text/x-python");
+            }
+            else if(option.value == 'c'){
+                editor.setOption("mode","text/x-csrc");
+            }
+           
+            else {
+                editor.setOption("mode","text/x-cppsrc");
+            }
+        })
+
+        async function Run(){
+            // inpute = document.getElementById('input');
+            option = document.getElementById('language');
+            console.log("RUNNING Run");
+            code = {
+                code : editor.getValue(),
+                input : inputeditor.getValue(),
+                lang  : option.value
+            }
+            console.log(code);
+            var oData = await fetch('http://localhost:8000/compile', {
+                    method : "POST",
+                    headers:{
+                        "Content-Type" : "application/json"
+                    },
+                    body : JSON.stringify(code)
+            })
+            var d = await oData.json();
+            console.log(d.output);
+            document.getElementById('outputArea').innerHTML = d.output;
+        }
+    </script>
+    
+</body>
+</html>
