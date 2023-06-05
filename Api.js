@@ -8,22 +8,22 @@ compiler.init(options);
 app.use(bodyP.json());
 app.use(
   "/node_modules/codemirror",
-  express.static("C:/Users/divya/html p/node_modules/codemirror")
+  express.static("D:/PROJECTS/CodeCamp/node_modules")
 );
-app.use("/", express.static("C:/Users/divya/html p/"));
+app.use("/", express.static("D:/PROJECTS/CodeCamp/"));
 
 app.get("/", function (req, res) {
   compiler.flush(function(){
   console.log("Deleted temporary files");
   })
-  res.sendFile("C:/Users/divya/html p/index.html");
+  res.sendFile("D:/PROJECTS/CodeCamp/index.html");
 });
 
 app.get("/compiler.html", function (req, res) {
   compiler.flush(function(){
     console.log("Deleted temporary files");
     })
-  res.sendFile("C:/Users/divya/html p/compiler.html");
+  res.sendFile("D:/PROJECTS/CodeCamp/compiler.html");
 });
 
 
